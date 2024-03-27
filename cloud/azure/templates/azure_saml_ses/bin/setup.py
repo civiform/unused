@@ -42,6 +42,7 @@ class Setup(SetupTemplate):
         self._setup_saml_keystore()
         print(" - Setting up SES")
         self._setup_ses()
+        return True
 
     def get_current_user(self):
         current_user_process = subprocess.run(
