@@ -4,6 +4,6 @@ provider "azurerm" {
 
 provider "aws" {
   region = var.aws_region
-  access_key = locals.aws_access_key_id
-  secret_key = locals.aws_secret_access_token
+  access_key = local.aws_access_key_id
+  secret_key = local.aws_secret_access_token
 }
