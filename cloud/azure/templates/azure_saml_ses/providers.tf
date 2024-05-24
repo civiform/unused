@@ -2,6 +2,4 @@ provider "azurerm" {
   features {}
 }
 
-provider "aws" {
-  region = var.aws_region
-}
+# this used to have aws provider, but removing
