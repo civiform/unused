@@ -1,6 +1,5 @@
 terraform {
   required_providers {
-     removing AWS provider
      aws = {
        source  = "hashicorp/aws"
        version = "5.15.0"
