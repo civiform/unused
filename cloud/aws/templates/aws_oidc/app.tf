@@ -311,29 +311,6 @@ resource "aws_ecs_task_definition" "civiform_only" {
   tags                     = local.tags
 }
 
-data "aws_lb" "alb_data" {
-  arn       = module.ecs_fargate_service.alb_arn  # Access the ALB's ARN from the module output
-  depends_on = [module.ecs_fargate_service]       # Wait for the module to create the ALB
-}
-
-# Get the IDs of the EC2 instances backing the ALB
-data "aws_instances" "alb_instances" {
-  filter {
-    name = "load-balancer-arn"
-    values = [data.aws_lb.alb_data.arn]
-  }
-}
-
-resource "aws_lb_target_group_attachment" "nlb_tg_attachment" {
-  count = 2
-
-  target_group_arn = module.ecs_fargate_service.alb_target_group_arn
-  target_id        = data.aws_instances.alb_instances.ids[count.index]
-  port             = var.port
-
-  depends_on = [module.ecs_fargate_service]
-}
-
 module "ecs_fargate_service" {
   source                    = "../../modules/ecs_fargate_service"
   app_prefix                = var.app_prefix
@@ -361,4 +338,29 @@ module "ecs_fargate_service" {
     Name = "${var.app_prefix} Civiform Fargate Service"
     Type = "Civiform Fargate Service"
   }
+}
+
+resource "aws_lb_listener_rule" "block_external_traffic_to_metrics_rule" {
+  listener_arn = module.ecs_fargate_service.https_listener_arn
+
+  action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Forbidden"
+      status_code  = "403"
+    }
+  }
+
+  condition {
+    path_pattern {
+      values = ["/metrics"]
+    }
+  }
+}
+
+moved {
+  from = aws_lb_listener_rule.block_external_traffic_to_metrics_rule[0]
+  to   = aws_lb_listener_rule.block_external_traffic_to_metrics_rule
 }
