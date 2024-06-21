@@ -119,8 +119,7 @@ resource "aws_lb_target_group" "lb_https_tgs" {
     health_check {
         enabled             = true
         interval            = 20
-        path                = ""/playIndex""         # Change to a health check path on your ALB
-        port                = "traffic-port"    # Check on the port the target receives traffic
+        path                = "/playIndex"         # Change to a health check path on your ALB
         protocol            = "HTTPS"           # Match the listener protocol
         timeout             = 15
         healthy_threshold   = 2
