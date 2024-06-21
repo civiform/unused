@@ -21,39 +21,10 @@ locals {
 }
 
 #------------------------------------------------------------------------------
-# NETWORK LOAD BALANCER (NLB)
-#------------------------------------------------------------------------------
-resource "aws_lb" "nlb" {
-  name               = substr("${local.name_prefix}-nlb", 0, 31)
-  internal           = true
-  load_balancer_type = "network"
-  subnets            = var.public_subnets
-  enable_deletion_protection = false
-
-  tags = merge(
-    var.tags,
-    {
-      Name = substr("${local.name_prefix}-nlb", 0, 31)
-    },
-  )
-}
-
-resource "aws_lb_listener" "nlb_listener" {
-  load_balancer_arn = aws_lb.nlb.arn
-  port              = 443
-  protocol          = "TCP"
-
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.lb_https_tgs.arn
-  }
-}
-
-#------------------------------------------------------------------------------
-# APPLICATION LOAD BALANCER (ALB) - Now acts as the target for NLB
+# APPLICATION LOAD BALANCER
 #------------------------------------------------------------------------------
 resource "aws_lb" "civiform_lb" {
-  name               = substr("${local.name_prefix}-alb", 0, 31)  # Renamed for clarity
+  name               = substr("${local.name_prefix}-lb", 0, 31)
   internal           = true
   load_balancer_type = "application"
   subnets            = var.public_subnets
@@ -63,7 +34,7 @@ resource "aws_lb" "civiform_lb" {
   tags = merge(
     var.tags,
     {
-      Name = substr("${local.name_prefix}-alb", 0, 31) 
+      Name = "${local.name_prefix}-lb"
     },
   )
 }
@@ -147,23 +118,6 @@ moved {
 }
 
 
-# Get the NLB's ARN directly
-data "aws_lb" "nlb_data" {
-  arn = aws_lb.nlb.arn
-}
-
-# Attach NLB instance to the target group (one attachment per instance)
-resource "aws_lb_target_group_attachment" "nlb_tg_attachment" {
-  count            = 1 
-
-  target_group_arn = aws_lb_target_group.lb_https_tgs.arn
-  target_id        = data.aws_lb.nlb_data.arn
-  port             = 443
-
-  depends_on = [aws_lb.civiform_lb]
-}
-
-
 ### end ecs-alb replacement
 
 #------------------------------------------------------------------------------
@@ -213,8 +167,6 @@ resource "aws_ecs_service" "service" {
       Name = "${local.name_prefix}-ecs-tasks-sg"
     },
   )
-
-  depends_on = [aws_lb_target_group_attachment.nlb_tg_attachment]
 }
 
 #------------------------------------------------------------------------------
