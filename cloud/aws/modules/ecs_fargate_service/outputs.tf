@@ -1,19 +1,3 @@
-# NLB Outputs
-output "nlb_arn" {
-  description = "The ARN of the Network Load Balancer (NLB)"
-  value       = aws_lb.nlb.arn
-}
-
-output "nlb_dns_name" {
-  description = "The DNS name of the Network Load Balancer (NLB)"
-  value       = aws_lb.nlb.dns_name
-}
-
-output "nlb_listener_arn" {
-  description = "The ARN of the TCP listener on the NLB"
-  value       = aws_lb_listener.nlb_listener.arn
-}
-
 # ALB Outputs
 output "alb_arn" {
   description = "The ARN of the Application Load Balancer (ALB)"
