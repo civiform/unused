@@ -72,6 +72,36 @@ moved {
   to   = aws_security_group.lb_access_sg
 }
 
+resource "aws_security_group_rule" "ingress_through_http" {
+  security_group_id = aws_security_group.lb_access_sg.id
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  prefix_list_ids   = []
+}
+
+moved {
+  from = module.ecs-alb[0].aws_security_group_rule.ingress_through_http["default_http"]
+  to   = aws_security_group_rule.ingress_through_http
+}
+
+resource "aws_security_group_rule" "ingress_through_https" {
+  security_group_id = aws_security_group.lb_access_sg.id
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  prefix_list_ids   = []
+}
+
+moved {
+  from = module.ecs-alb[0].aws_security_group_rule.ingress_through_https["default_http"]
+  to   = aws_security_group_rule.ingress_through_https
+}
+
 
 
 #------------------------------------------------------------------------------
@@ -115,6 +145,54 @@ resource "aws_lb_target_group" "lb_https_tgs" {
 moved {
   from = module.ecs-alb[0].aws_lb_target_group.lb_https_tgs["default_http"]
   to   = aws_lb_target_group.lb_https_tgs
+}
+
+#------------------------------------------------------------------------------
+# AWS LOAD BALANCER - Listeners
+#------------------------------------------------------------------------------
+resource "aws_lb_listener" "lb_http_listeners" {
+  load_balancer_arn = aws_lb.civiform_lb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+    redirect {
+      host        = "#{host}"
+      path        = "/#{path}"
+      port        = 443
+      protocol    = "HTTPS"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  tags = var.tags
+}
+
+moved {
+  from = module.ecs-alb[0].aws_lb_listener.lb_http_listeners["default_http"]
+  to   = aws_lb_listener.lb_http_listeners
+}
+
+resource "aws_lb_listener" "lb_https_listeners" {
+  load_balancer_arn = aws_lb.civiform_lb.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = var.ssl_policy
+  certificate_arn   = var.default_certificate_arn
+
+  default_action {
+    target_group_arn = aws_lb_target_group.lb_https_tgs.arn
+    type             = "forward"
+  }
+
+  tags = var.tags
+}
+
+moved {
+  from = module.ecs-alb[0].aws_lb_listener.lb_https_listeners["default_http"]
+  to   = aws_lb_listener.lb_https_listeners
 }
 
 
