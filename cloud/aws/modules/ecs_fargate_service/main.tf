@@ -110,7 +110,7 @@ moved {
 resource "aws_lb_target_group" "lb_https_tgs" {
     name                 = "${var.app_prefix}-https-${var.https_target_port}"
     port                 = var.https_target_port
-    protocol             = "TCP"           
+    protocol             = "HTTPS"           
     vpc_id               = var.vpc_id
     deregistration_delay = 300
     slow_start           = 0
@@ -119,7 +119,7 @@ resource "aws_lb_target_group" "lb_https_tgs" {
     health_check {
         enabled             = true
         interval            = 20
-        path                = "/playIndex"         # Change to a health check path on your ALB
+        path                = "/"         # Change to a health check path on your ALB
         protocol            = "HTTPS"           # Match the listener protocol
         timeout             = 15
         healthy_threshold   = 2
