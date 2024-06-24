@@ -24,18 +24,18 @@ locals {
 # APPLICATION LOAD BALANCER
 #------------------------------------------------------------------------------
 resource "aws_lb" "civiform_lb" {
-  name               = substr("${local.name_prefix}-lb", 0, 31)
+  name = substr("${local.name_prefix}-lb", 0, 31)
 
-  internal           = true
-  load_balancer_type = "application"
-  drop_invalid_header_fields = false
-  subnets            = var.public_subnets
+  internal                         = true
+  load_balancer_type               = "application"
+  drop_invalid_header_fields       = false
+  subnets                          = var.public_subnets
   idle_timeout                     = 60
   enable_deletion_protection       = false
   enable_cross_zone_load_balancing = false
-  enable_http2        = true
-  ip_address_type = "ipv4"
-  security_groups = [aws_security_group.lb_access_sg.id]
+  enable_http2                     = true
+  ip_address_type                  = "ipv4"
+  security_groups                  = [aws_security_group.lb_access_sg.id]
 
   tags = merge(
     var.tags,
@@ -114,39 +114,39 @@ moved {
 # AWS LOAD BALANCER - Target Groups
 #------------------------------------------------------------------------------
 resource "aws_lb_target_group" "lb_https_tgs" {
-    name                 = "${var.app_prefix}-https-${var.https_target_port}"
+  name = "${var.app_prefix}-https-${var.https_target_port}"
 
-    port                 = var.https_target_port
-    protocol             = "HTTPS"           
-    vpc_id               = var.vpc_id
-    deregistration_delay = 300
-    slow_start           = 0
-    load_balancing_algorithm_type = "round_robin"
-    target_type          = "ip"
+  port                          = var.https_target_port
+  protocol                      = "HTTPS"
+  vpc_id                        = var.vpc_id
+  deregistration_delay          = 300
+  slow_start                    = 0
+  load_balancing_algorithm_type = "round_robin"
+  target_type                   = "ip"
 
-    health_check {
-        enabled             = true
-        interval            = 20
-        path                = "/"         # Change to a health check path on your ALB
-        protocol            = "HTTPS"     # Match the listener protocol
-        timeout             = 15
-        healthy_threshold   = 2
-        unhealthy_threshold = 10
-        matcher             = "200-399"   # Allow for a range of successful responses
-    }
+  health_check {
+    enabled             = true
+    interval            = 20
+    path                = "/"     # Change to a health check path on your ALB
+    protocol            = "HTTPS" # Match the listener protocol
+    timeout             = 15
+    healthy_threshold   = 2
+    unhealthy_threshold = 10
+    matcher             = "200-399" # Allow for a range of successful responses
+  }
 
-    tags = merge(
-        var.tags,
-        {
-            Name = "${local.name_prefix}-https-${var.https_target_port}"
-        },
-    )
+  tags = merge(
+    var.tags,
+    {
+      Name = "${local.name_prefix}-https-${var.https_target_port}"
+    },
+  )
 
-    lifecycle {
-        create_before_destroy = true
-    }
+  lifecycle {
+    create_before_destroy = true
+  }
 
-    depends_on = [aws_lb.civiform_lb]
+  depends_on = [aws_lb.civiform_lb]
 }
 
 moved {
