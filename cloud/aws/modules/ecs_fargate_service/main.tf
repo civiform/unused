@@ -25,11 +25,17 @@ locals {
 #------------------------------------------------------------------------------
 resource "aws_lb" "civiform_lb" {
   name               = substr("${local.name_prefix}-lb", 0, 31)
+
   internal           = true
   load_balancer_type = "application"
+  drop_invalid_header_fields = false
   subnets            = var.public_subnets
-  enable_deletion_protection = false
+  idle_timeout                     = 60
+  enable_deletion_protection       = false
+  enable_cross_zone_load_balancing = false
   enable_http2        = true
+  ip_address_type = "ipv4"
+  security_groups = [aws_security_group.lb_access_sg.id]
 
   tags = merge(
     var.tags,
@@ -105,26 +111,28 @@ moved {
 
 
 #------------------------------------------------------------------------------
-# AWS LOAD BALANCER - Target Groups (ALB)
+# AWS LOAD BALANCER - Target Groups
 #------------------------------------------------------------------------------
 resource "aws_lb_target_group" "lb_https_tgs" {
     name                 = "${var.app_prefix}-https-${var.https_target_port}"
+
     port                 = var.https_target_port
     protocol             = "HTTPS"           
     vpc_id               = var.vpc_id
     deregistration_delay = 300
     slow_start           = 0
-    target_type          = "ip"                # Target type is now IP
+    load_balancing_algorithm_type = "round_robin"
+    target_type          = "ip"
 
     health_check {
         enabled             = true
         interval            = 20
         path                = "/"         # Change to a health check path on your ALB
-        protocol            = "HTTPS"           # Match the listener protocol
+        protocol            = "HTTPS"     # Match the listener protocol
         timeout             = 15
         healthy_threshold   = 2
         unhealthy_threshold = 10
-        matcher             = "200-399"         # Allow for a range of successful responses
+        matcher             = "200-399"   # Allow for a range of successful responses
     }
 
     tags = merge(
@@ -193,8 +201,6 @@ moved {
   from = module.ecs-alb[0].aws_lb_listener.lb_https_listeners["default_http"]
   to   = aws_lb_listener.lb_https_listeners
 }
-
-
 ### end ecs-alb replacement
 
 #------------------------------------------------------------------------------
