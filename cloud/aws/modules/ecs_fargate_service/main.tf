@@ -108,14 +108,11 @@ moved {
   to   = aws_security_group_rule.ingress_through_https
 }
 
-
-
 #------------------------------------------------------------------------------
 # AWS LOAD BALANCER - Target Groups
 #------------------------------------------------------------------------------
 resource "aws_lb_target_group" "lb_https_tgs" {
-  name = "${var.app_prefix}-https-${var.https_target_port}"
-
+  name                          = "${var.app_prefix}-https-${var.https_target_port}"
   port                          = var.https_target_port
   protocol                      = "HTTPS"
   vpc_id                        = var.vpc_id
