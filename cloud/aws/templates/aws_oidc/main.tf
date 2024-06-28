@@ -142,11 +142,13 @@ resource "aws_security_group" "rds" {
 
   dynamic "ingress" {
     for_each = local.enable_managed_vpc ? [] : [1]
-    from_port       = 5432
-    to_port         = 5432
-    protocol        = "tcp"
-    security_groups = [module.ecs_fargate_service.aws_security_group_lb_access_sg_id]
-    description     = "Allow inbound traffic from the ECS task"
+    content {
+      from_port       = 5432
+      to_port         = 5432
+      protocol        = "tcp"
+      security_groups = [module.ecs_fargate_service.aws_security_group_lb_access_sg_id]
+      description     = "Allow inbound traffic from the ECS task"
+    }
   }
 }
 
