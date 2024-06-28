@@ -146,7 +146,7 @@ resource "aws_security_group" "rds" {
       from_port       = 5432
       to_port         = 5432
       protocol        = "tcp"
-      security_groups = [module.ecs_fargate_service.aws_security_group_lb_access_sg_id]
+      security_groups = [module.ecs_fargate_service.aws_security_group_ecs_tasks_access_sg_id]
     }
   }
 }
