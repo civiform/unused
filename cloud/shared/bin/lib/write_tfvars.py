@@ -17,6 +17,8 @@ class TfVarWriter:
     # a json of key: vals to turn into a tfvars
     def write_variables(self, config_vars: dict):
         with open(self.filepath, "w") as tf_vars_file:
+            print("CONFIG VARS")
+            print(config_vars.items())
             for name, definition in config_vars.items():
                 # Special key that has a dict value.
                 if name == Variables.CIVIFORM_SERVER_VARIABLES_KEY:
@@ -24,9 +26,6 @@ class TfVarWriter:
                         f"{Variables.CIVIFORM_SERVER_VARIABLES_KEY} = {{\n")
                     for key, value in definition.items():
                         if value is not None:
-                            print("THIS IS THE VALUE")
-                            print(value)
-                            print(type(value) is list)
                             if type(value) is list:
                                 print("LIST TYPE")
                                 tf_vars_file.write(f'{key.lower()}={value}\n')
