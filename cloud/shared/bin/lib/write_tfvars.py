@@ -55,9 +55,7 @@ class TfVarWriter:
                     print("DEFINITION")
                     print(definition)
                     print("TYPE DEF")
-                    print(type(json.loads(definition)))
-                    print("IS LIST IS")
-                    print(isinstance(definition, list))
+                    print(json.loads(definition))
                     if type(json.loads(definition)) is list:
                         print("LIST TYPE")
                         tf_vars_file.write(f'{name.lower()}="{definition}"\n')
