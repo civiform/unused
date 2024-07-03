@@ -120,6 +120,12 @@ resource "aws_lb_target_group" "lb_https_tgs" {
   slow_start                    = 0
   load_balancing_algorithm_type = "round_robin"
   target_type                   = "ip"
+  
+  stickiness {
+    type            = "lb_cookie"
+    cookie_duration = 86400
+    enabled         = true
+  }
 
   health_check {
     enabled             = true
