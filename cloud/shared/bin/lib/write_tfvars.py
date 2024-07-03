@@ -58,15 +58,10 @@ class TfVarWriter:
                     if definition is not None:
                         is_list = False
                         try:
-                            is_list = isinstance(json.loads(definition), list)
-                        #     if isinstance(json_def, list):
-                        #         print("LIST TYPE")
-                        #         tf_vars_file.write(f'{name.lower()}={definition}\n')
-                        #     else:
-                        #         tf_vars_file.write(f'{name.lower()}="{definition}"\n')
-                        # except json.JSONDecodeError as e:
-                        #     print(f"Invalid JSON for '{name}': {e}")
-                        if is_list:
-                            tf_vars_file.write(f'{name.lower()}={definition}\n')
+                            parsed_definition = json.loads(definition)
+                        except json.JSONDecodeError as e:
+                            parsed_definition = definition
+                        if isinstance(parsed_definition, list):
+                            tf_vars_file.write(f'{name.lower()}={parsed_definition}\n')
                         else:
                             tf_vars_file.write(f'{name.lower()}="{definition}"\n')
