@@ -5,7 +5,7 @@ name="value"\n
 If we want to store non string values here we will need to add in the variables
 and do a lil more advanced file writing
 """
-import ast
+import json
 
 from cloud.shared.bin.lib.variables import Variables
 
