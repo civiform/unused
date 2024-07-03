@@ -15,6 +15,14 @@ class TfVarWriter:
     def __init__(self, filepath):
         self.filepath = filepath
 
+    def is_valid_list_string(input_string):
+        try:
+            ast.literal_eval(input_string)
+        except (ValueError, SyntaxError):
+            return False
+        return isinstance(ast.literal_eval(input_string), list)
+
+
     # a json of key: vals to turn into a tfvars
     def write_variables(self, config_vars: dict):
         with open(self.filepath, "w") as tf_vars_file:
@@ -64,10 +72,3 @@ class TfVarWriter:
                             tf_vars_file.write(f'{name.lower()}="{definition}"\n')
                         else:
                             tf_vars_file.write(f'{name.lower()}="{definition}"\n')
-
-    def is_valid_list_string(input_string):
-        try:
-            ast.literal_eval(input_string)
-        except (ValueError, SyntaxError):
-            return False
-        return isinstance(ast.literal_eval(input_string), list)
