@@ -124,12 +124,12 @@ resource "aws_lb_target_group" "lb_https_tgs" {
   health_check {
     enabled             = true
     interval            = 20
-    path                = "/"     # Change to a health check path on your ALB
-    protocol            = "HTTP" # Match the listener protocol
+    path                = "/playIndex"
+    protocol            = "HTTP"
     timeout             = 15
     healthy_threshold   = 2
     unhealthy_threshold = 10
-    matcher             = "200-399" # Allow for a range of successful responses
+    matcher             = "200"
   }
 
   tags = merge(
