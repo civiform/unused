@@ -30,6 +30,10 @@ class TfVarWriter:
 
                 # Special handling for "list" type variables
                 if name == Variables.TERRAFORM_LIST_VARIABLES_KEY:
+                    print("THIS IS THE KEY")
+                    print(key)
+                    print("THIS IS THE VALUE")
+                    print(value)
                     for key, value in definition.items():
                         if value is not None:
                             tf_vars_file.write(f'{key.lower()}={value}\n')
