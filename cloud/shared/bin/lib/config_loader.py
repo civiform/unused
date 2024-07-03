@@ -382,30 +382,21 @@ class ConfigLoader:
                 continue
 
             if name in config_fields:
-                # List variables get special handling when writing the tfvars
-                if definition.get("type") == "list":
-                    terraform_list_variables[name] = config_fields[name]
-                else:
-                    out[name] = config_fields[name]
+                out[name] = config_fields[name]
 
-        # Create a map of terraform list variables, since those are handled differently
-        if terraform_list_variables:
-            out[Variables.
-                TERRAFORM_LIST_VARIABLES_KEY] = terraform_list_variables
-
-        if civiform_server_env_var_definitions:
-            env_vars = {}
-            for name, variable in civiform_server_env_var_definitions.items():
-                if name in config_fields:
-                    if variable.type == "index-list":
-                        i = -1
-                        for item in config_fields[name].split(","):
-                            i += 1
-                            env_vars[f"{name}.{i}"] = item.strip()
-                    else:
-                        env_vars[name] = config_fields[name]
-
-            out[Variables.CIVIFORM_SERVER_VARIABLES_KEY] = env_vars
+            if civiform_server_env_var_definitions:
+                env_vars = {}
+                for name, variable in civiform_server_env_var_definitions.items():
+                    if name in config_fields:
+                        if variable.type == "index-list":
+                            i = -1
+                            for item in config_fields[name].split(","):
+                                i += 1
+                                env_vars[f"{name}.{i}"] = item.strip()
+                        else:
+                            env_vars[name] = config_fields[name]
+    
+                out[Variables.CIVIFORM_SERVER_VARIABLES_KEY] = env_vars
 
         return out
 
