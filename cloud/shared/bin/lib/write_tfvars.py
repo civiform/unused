@@ -66,6 +66,6 @@ class TfVarWriter:
                             print(definition)
                             print("PARSED")
                             print(parsed_definition)
-                            tf_vars_file.write(f'{name.lower()}={parsed_definition}\n')
+                            tf_vars_file.write(f'{name.lower()}={definition}\n')
                         else:
                             tf_vars_file.write(f'{name.lower()}="{definition}"\n')
