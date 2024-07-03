@@ -5,6 +5,7 @@ name="value"\n
 If we want to store non string values here we will need to add in the variables
 and do a lil more advanced file writing
 """
+import json
 
 from cloud.shared.bin.lib.variables import Variables
 
@@ -54,10 +55,10 @@ class TfVarWriter:
                     print("DEFINITION")
                     print(definition)
                     print("TYPE DEF")
-                    print(type(definition))
+                    print(type(json.loads(definition)))
                     print("IS LIST IS")
                     print(isinstance(definition, list))
-                    if type(definition) is list:
+                    if type(json.loads(definition)) is list:
                         print("LIST TYPE")
                         tf_vars_file.write(f'{name.lower()}="{definition}"\n')
 
