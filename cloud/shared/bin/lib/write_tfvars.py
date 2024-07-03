@@ -24,7 +24,10 @@ class TfVarWriter:
                         f"{Variables.CIVIFORM_SERVER_VARIABLES_KEY} = {{\n")
                     for key, value in definition.items():
                         if value is not None:
-                            if isinstance(value, list):
+                            print("THIS IS THE VALUE")
+                            print(value)
+                            print(type(value) is list)
+                            if type(value) is list:
                                 print("LIST TYPE")
                                 tf_vars_file.write(f'{key.lower()}={value}\n')
                             else:
