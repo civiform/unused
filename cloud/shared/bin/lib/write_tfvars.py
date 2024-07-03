@@ -56,9 +56,11 @@ class TfVarWriter:
                     print(definition)
                     print("TYPE DEF")
                     print(ast.literal_eval(definition))
-                    if type(ast.literal_eval(definition)) is list:
-                        print("LIST TYPE")
-                        tf_vars_file.write(f'{name.lower()}="{definition}"\n')
 
                     if definition is not None:
-                        tf_vars_file.write(f'{name.lower()}="{definition}"\n')
+                        
+                        if type(ast.literal_eval(definition)) is list:
+                            print("LIST TYPE")
+                            tf_vars_file.write(f'{name.lower()}="{definition}"\n')
+                        else:
+                            tf_vars_file.write(f'{name.lower()}="{definition}"\n')
