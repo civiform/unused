@@ -382,6 +382,11 @@ class ConfigLoader:
                 continue
 
             if name in config_fields:
+                print("got to other config_fields")
+                print("THIS IS THE NAME")
+                print(name)
+                print("THIS IS THE value")
+                print(config_fields[name])
                 out[name] = config_fields[name]
 
             if civiform_server_env_var_definitions:
