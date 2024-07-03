@@ -54,6 +54,10 @@ class TfVarWriter:
                     print(name)
                     print("DEFINITION")
                     print(definition)
+                    print("TYPE DEF")
+                    print(type(definition))
+                    print("IS LIST IS")
+                    print(isinstance(definition, list))
                     if type(definition) is list:
                         print("LIST TYPE")
                         tf_vars_file.write(f'{name.lower()}="{definition}"\n')
