@@ -388,7 +388,12 @@ class ConfigLoader:
                 env_vars = {}
                 for name, variable in civiform_server_env_var_definitions.items():
                     if name in config_fields:
+                        print("THIS IS THE NAME")
+                        print(name)
+                        print("THIS IS THE value")
+                        print(config_fields[name])
                         if variable.type == "index-list":
+                            print("IN INDEX LIST")
                             i = -1
                             for item in config_fields[name].split(","):
                                 i += 1
