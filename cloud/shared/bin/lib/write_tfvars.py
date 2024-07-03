@@ -48,9 +48,15 @@ class TfVarWriter:
                 #         print(value)
                 #         if value is not None:
                 #             tf_vars_file.write(f'{key.lower()}={value}\n')
-                elif type(definition) is list:
-                    print("LIST TYPE")
-                    tf_vars_file.write(f'{name.lower()}="{definition}"\n')
+                else:
+                    print("GOT TO ELSE IN WRITE TF VARS")
+                    print("NAME")
+                    print(name)
+                    print("DEFINITION")
+                    print(definition)
+                    if type(definition) is list:
+                        print("LIST TYPE")
+                        tf_vars_file.write(f'{name.lower()}="{definition}"\n')
 
-                elif definition is not None:
-                    tf_vars_file.write(f'{name.lower()}="{definition}"\n')
+                    if definition is not None:
+                        tf_vars_file.write(f'{name.lower()}="{definition}"\n')
