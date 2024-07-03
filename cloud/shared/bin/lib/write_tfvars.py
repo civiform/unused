@@ -58,9 +58,16 @@ class TfVarWriter:
                     if definition is not None:
                         
                         print("TYPE DEF")
-                        print(ast.literal_eval(definition))
-                        if type(ast.literal_eval(definition)) is list:
+                        print(is_valid_list_string(definition))
+                        if is_valid_list_string(definition):
                             print("LIST TYPE")
                             tf_vars_file.write(f'{name.lower()}="{definition}"\n')
                         else:
                             tf_vars_file.write(f'{name.lower()}="{definition}"\n')
+
+    def is_valid_list_string(input_string):
+        try:
+            ast.literal_eval(input_string)
+        except (ValueError, SyntaxError):
+            return False
+        return isinstance(ast.literal_eval(input_string), list)
