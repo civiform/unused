@@ -420,6 +420,7 @@ class TestConfigLoader(unittest.TestCase):
         terraform_vars = config_loader.get_terraform_variables()
         self.assertEqual(3, len(terraform_vars))
         self.assertEqual(terraform_vars["FOO_1"], "normal string")
+        self.assertEqual(terraform_vars["FOO_2"], ["test1", "test2"])
 
         list_vars = terraform_vars[Variables.TERRAFORM_LIST_VARIABLES_KEY]
         self.assertEqual(list_vars["FOO_2"], ["test1", "test2"])

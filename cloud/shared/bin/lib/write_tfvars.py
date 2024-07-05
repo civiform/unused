@@ -6,7 +6,7 @@ If we want to store non string values here we will need to add in the variables
 and do a lil more advanced file writing
 """
 
-from cloud.shared.bin.lib.variables import Variables
+import json
 
 
 class TfVarWriter:
@@ -28,11 +28,11 @@ class TfVarWriter:
                     tf_vars_file.write("}\n")
                     continue
 
-                # Special handling for "list" type variables
-                if name == Variables.TERRAFORM_LIST_VARIABLES_KEY:
-                    for key, value in definition.items():
-                        if value is not None:
-                            tf_vars_file.write(f'{key.lower()}={value}\n')
-
-                elif definition is not None:
-                    tf_vars_file.write(f'{name.lower()}="{definition}"\n')
+                if definition is not None:
+                    try:
+                        parsed_definition = json.loads(definition)
+                    except json.JSONDecodeError as e:
+                        parsed_definition = definition
+                    formatted_value = definition if isinstance(
+                        parsed_definition, list) else f'"{definition}"'
+                    tf_vars_file.write(f'{name.lower()}={formatted_value}\n')
