@@ -110,7 +110,6 @@ moved {
 }
 
 resource "aws_security_group_rule" "ingress_through_http" {
-  count             = var.enable_http_listener ? 1 : 0
   security_group_id = aws_security_group.lb_access_sg.id
   type              = "ingress"
   from_port         = 80
@@ -122,7 +121,7 @@ resource "aws_security_group_rule" "ingress_through_http" {
 
 moved {
   from = module.ecs-alb[0].aws_security_group_rule.ingress_through_http["default_http"]
-  to   = aws_security_group_rule.ingress_through_http[0]
+  to   = aws_security_group_rule.ingress_through_http
 }
 
 resource "aws_security_group_rule" "ingress_through_https" {
