@@ -1,9 +1,9 @@
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "5.78.0"
-    }
+    # aws = {
+    #   source  = "hashicorp/aws"
+    #   version = "5.78.0"
+    # }
     azurerm = {
       source  = "azurerm"
       version = "4.11.0"
@@ -13,6 +13,12 @@ terraform {
   backend "azurerm" {}
   required_version = ">= 0.14.9"
 }
+
+# provider "aws" {
+#   skip_credentials_validation = true
+#   skip_metadata_api_check     = true
+#   skip_requesting_account_id  = true
+# }
 
 module "app" {
   source = "../../modules/app"
@@ -63,14 +69,17 @@ module "saml_keystore" {
   resource_group_name          = var.azure_resource_group
 }
 
-# Removing reliance on AWS for the email service
-# module "email_service" {
-#   for_each = toset([
-#     var.sender_email_address,
-#     var.staging_applicant_notification_mailing_list,
-#     var.staging_ti_notification_mailing_list,
-#     var.staging_program_admin_notification_mailing_list
-#   ])
-#   source               = "../../../aws/modules/ses"
-#   sender_email_address = each.key
-# }
+
+
+module "email_service" {
+  # Only create the aws_ses module if that is the email_provider
+  for_each = toset([
+    var.sender_email_address,
+    var.staging_applicant_notification_mailing_list,
+    var.staging_ti_notification_mailing_list,
+    var.staging_program_admin_notification_mailing_list
+  ])
+  source                   = "../../modules/email_service"
+  create_aws_email_service = var.email_provider == "aws-ses" ? true : false
+  sender_email_address     = each.key
+}
